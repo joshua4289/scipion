@@ -226,8 +226,8 @@ class BoxWizardView(tk.Frame):
             t = LABELS.get(key, key)
             var = tk.IntVar()
             var.set(0)
-            print "Explicit set to 0"
-            print var.get()
+            #print "Explicit set to 0"
+            #print var.get()
             if value is not 0:
                 var.set(int(1))
 
@@ -293,7 +293,7 @@ class BoxWizardView(tk.Frame):
         return self.vars[varKey]
 
     def _getValue(self, varKey):
-        print "getting {} from {}".format(varKey, self.vars)
+        #print "getting {} from {}".format(varKey, self.vars)
         return self.vars[varKey].get()
 
     def _setValue(self, varKey, value):
