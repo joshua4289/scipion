@@ -241,10 +241,10 @@ scons = env.addModule(
     targets=[env.getBin('scons')],
     tar='scons-2.3.4.tgz')
 
-numpy = env.addModule(
-    'numpy',
-    tar='numpy-1.8.1.tgz',
-    deps=[lapack])
+# numpy = env.addModule(
+#     'numpy',
+#     tar='numpy-1.8.1.tgz',
+#     deps=[lapack])
 
 six = env.addModule(
     'six',
@@ -267,7 +267,7 @@ matplotlib = env.addModule(
     tar='matplotlib-1.3.1.tgz',
     targets=['matplotlib-1.3.1*'],
     numpyIncludes=True,
-    deps=[numpy, png, dateutil, pyparsing])
+    deps=[png, dateutil, pyparsing])
 
 poster = env.addModule(
     'poster',
@@ -287,7 +287,7 @@ scipy = env.addModule(
     'scipy',
     tar='scipy-0.14.0.tgz',
     default=not noScipy,
-    deps=[lapack, numpy, matplotlib])
+    deps=[matplotlib])
 
 bibtexparser = env.addModule(
     'bibtexparser',
@@ -364,7 +364,7 @@ sklearn = env.addModule(
     'sklearn',
     tar='scikit-learn-0.17.tar.gz',
     default=False,
-    deps=[scipy, numpy, cython])
+    deps=[scipy, cython])
 
 
 
@@ -507,7 +507,7 @@ env.addPackage('cryoem', version='1.0',
                 tar='cryoem-1.0.tgz',
                 pythonMod=True, default=False,
                 numpyIncludes=True,
-                deps=[numpy, scipy, matplotlib, cythongsl])
+                deps=[scipy, matplotlib, cythongsl])
 
 env.addPackage('gEMpicker', version='1.1',
                tar='gEMpicker_v1.1.tgz')
