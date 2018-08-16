@@ -32,7 +32,11 @@ from protocol_resolution_monogenic_signal import XmippProtMonoRes
 from pyworkflow.em.metadata import MetaData, MDL_X, MDL_COUNT
 from pyworkflow.em import ImageHandler
 import numpy as np
-import matplotlib.pyplot as plt
+try :
+    import matplotlib.pyplot as plt
+except:
+    plt=None
+    
 from matplotlib import cm
 import matplotlib.colors as mcolors
 from pyworkflow.utils import getExt, removeExt
