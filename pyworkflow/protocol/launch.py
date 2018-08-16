@@ -46,8 +46,19 @@ import pyworkflow as pw
 from pyworkflow.utils import (redStr, greenStr, makeFilePath, join, process,
                               getHostFullName)
 
+#These imports are for generating ActiveMQ recipies
+#from __future__ import absolute_import, division, print_function
+# import workflows.recipe
+# from workflows.transport.stomp_transport import StompTransport
+# import imp
+
+# wr = imp.load_compiled('workflows.recipe', '/dls_sw/apps/dials/dials-v1-10-4/base/lib/python2.7/site-packages/workflows/recipe/__init__.pyc')
+# st = imp.load_compiled('StompTransport','/dls_sw/apps/dials/dials-v1-10-4/base/lib/python2.7/site-packages/workflows/transport/stomp_transport.pyc')
+
 UNKNOWN_JOBID = -1
 LOCALHOST = 'localhost'
+
+# zocalo_job_path = "" #protocol.getProject().path
 
 
 # ******************************************************************
@@ -121,15 +132,25 @@ def _getAppsProgram(prog):
 
 def _launchLocal(protocol, wait, stdin=None, stdout=None, stderr=None):
     # Check first if we need to launch with MPI or not
+    
+    # zocalo_job_path = protocol.getProject().path 
+
     protStrId = protocol.strId()
     python = pw.SCIPION_PYTHON
     scipion = pw.getScipionScript()
     command = '%s %s runprotocol pw_protocol_run.py "%s" "%s" %s' % (python, scipion,
-                                                                     protocol.getProject().path, 
-                                                                     protocol.getDbPath(), 
+                                                                     protocol.getProject().path,
+                                                                     protocol.getDbPath(),
                                                                      protStrId)
     hostConfig = protocol.getHostConfig()
     useQueue = protocol.useQueue()
+
+    # our_params = ['runprotocol', 'pw_protocol_run.py', protocol.getProject().path, protocol.getDbPath(), protStrId]
+    # our_command = process.buildRunCommand(scipion, our_params, -1, hostConfig=hostConfig, env=python)
+
+    # print('+++++++++New Command++++++++++')
+    # print(our_command)
+
     # Check if need to submit to queue    
     if useQueue:        
         submitDict = dict(hostConfig.getQueuesDefault())
@@ -228,6 +249,73 @@ def _submit(hostConfig, submitDict):
     command = hostConfig.getSubmitCommand() % submitDict
     gcmd = greenStr(command)
     print "** Submiting to queue: '%s'" % gcmd
+
+    # zf = open('/home/jtq89441/Desktop/scipion.log','w+')
+    # zf.write('It works!%s'%submitDict)
+    # zf.close()
+    #  ----------------------------------
+    DLS_SCIPION = '/dls_sw/apps/scipion/release-1.2.1-zo'
+
+    # command_for_recipe = 'module load %s &&'%DLS_SCIPION +'; '+ command
+
+    projpath = submitDict['JOB_COMMAND'].split()[4]
+
+
+
+    command_for_queue = '%s %s'%(command.split()[0], '/'.join([projpath, command.split()[1]]))
+
+    print 'command_for_queue: %s'%command_for_queue
+
+    zocolo_cmd = 'module load dials; dials.python /dls_sw/apps/scipion/scipion_1_2_1_dials/scipion/pyworkflow/protocol/generic_template.py %s'% command_for_queue 
+
+    print zocolo_cmd
+
+    print '****Before Zocolo****'
+    msg_p = Popen(zocolo_cmd, shell=True)
+    print '****After Zocolo****'
+
+    #  ------------------------------------
+
+    #Generating the recipe for ActiveMQ
+    # default_configuration = '/dls_sw/apps/zocalo/secrets/credentials-live.cfg'
+    # # override default stomp host
+    # try:
+    #     StompTransport.load_configuration_file(default_configuration)
+    # except workflows.Error as e:
+    #     print "Error: %s\n" % str(e)
+    #
+    # # StompTransport.add_command_line_options(parser)
+    # # (options, args) = parser.parse_args(sys.argv[1:])
+    # stomp = StompTransport()
+    #
+    # message = {'recipes': [],
+    #            'parameters': {},
+    #            }
+    # # Build a custom recipe
+    # command_for_recipe = 'module load scipion/release-1.2.1-headless &&' + command
+    #
+    # recipe = {}
+    # recipe['1'] = {}
+    # recipe['1']['service'] = "motioncor2_runner"
+    # recipe['1']['queue'] = "motioncor2_runner"
+    # recipe['1']['parameters'] = {}
+    # recipe['1']['parameters']['arguments'] = command_for_recipe
+    # recipe['start'] = [[1, []]]
+    #
+    # message['custom_recipe'] = recipe
+    # print "******************************** THIS IS THE SUBMITTED RECIPE**********************************************"
+    #
+    # stomp.connect()
+    # test_valid_recipe = workflows.recipe.Recipe(recipe)
+    # test_valid_recipe.validate()
+    # print message
+    #
+    # stomp.send('processing_recipe',message)
+    # print("\nMotioncor2 job submitted")
+    ## end of recipe generation
+
+    # Npn zocalo scipion send command 
+
     p = Popen(command, shell=True, stdout=PIPE)
     out = p.communicate()[0]
     # Try to parse the result of qsub, searching for a number (jobId)
