@@ -53,5 +53,6 @@ if __name__ == '__main__':
         'processing_recipe',
 
         message
+        #headers={'reply-to':'scipion_call_back'}
     )
     print("\nMotioncor2 job submitted")
