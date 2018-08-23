@@ -152,7 +152,9 @@ def _launchLocal(protocol, wait, stdin=None, stdout=None, stderr=None):
         submitDict['JOB_COMMAND'] = command
         jobId = _submit(hostConfig, submitDict)
     else:
-        jobId = _run(command, wait, stdin, stdout, stderr)
+       # jobId = _run(command, wait, stdin, stdout, stderr)
+        jobId = _run_zocolo(command, wait, stdin, stdout, stderr)
+        
 
     return jobId
     
@@ -312,16 +314,73 @@ def _submit(hostConfig, submitDict):
     #     print "** Couldn't parse %s ouput: %s" % (gcmd, redStr(out)) 
     #     return UNKNOWN_JOBID
 #-----------end-----------------------
+def _run_zocolo(command, wait, stdin=None, stdout=None, stderr=None):
+    """ Execute a command in a subprocess and return the pid. """
+    gcmd = greenStr(command)
+    print "** Running command: '%s'" % gcmd
+
+    # path_log = os.path.dirname(os.path.join(command.split(' ')[4].replace('"',''),command.split(' ')[5].replace('"','') ))
+    # print('path: %s'%path_log)
+
+    # json_op = os.path.join(path_log,'jobid_mapper.json') 
+    # if os.path.exists(json_op):
+    #     os.remove(json_op)
+
+    # FIX ME: hard coding 
+    zocolo_cmd = 'module load dials; dials.python /dls_sw/apps/scipion/scipion_1_2_1_dials/scipion/pyworkflow/protocol/start_services.py --live -s ScipionProducer %s'% command 
+
+    print zocolo_cmd
+
+
+
+    # path_log = os.path.dirname(os.path.join(projpath.replace('"',''), command.split()[1]))
+    # print('path: %s'%path_log)
+
+    # json_op = os.path.join(path_log,'jobid_mapper.json') 
+    # if os.path.exists(json_op):
+    #     os.remove(json_op)
+
+
+
+
+    print '****Before Zocolo****'
+    msg_p = Popen(zocolo_cmd,shell=True,stdout=PIPE,stderr=PIPE)
+    print '****After Zocolo****'
+
+
+    out = msg_p.communicate()[0]
+    # Try to parse the result of qsub, searching for a number (jobId)
+    s = re.search('(\d+)', out)
+    if s:
+        return int(s.group(0))
+    else:
+        print "** Couldn't parse %s ouput: %s" % (gcmd, redStr(out)) 
+        return UNKNOWN_JOBID
+
+    # time.sleep(2)
+    # completed_job_id = None
+    # while completed_job_id is None:
+
+    #     if os.path.exists(json_op):
+    #         with open(json_op,'r') as json_ip_file:
+    #             data = json.load(json_ip_file)
+
+    #             completed_job_id = data['job_id']
+    # return completed_job_id
+
+
 
     
 def _run(command, wait, stdin=None, stdout=None, stderr=None):
     """ Execute a command in a subprocess and return the pid. """
     gcmd = greenStr(command)
     print "** Running command: '%s'" % gcmd
+
     p = Popen(command, shell=True, stdout=stdout, stderr=stderr)
     jobId = p.pid
     if wait:
         p.wait()
+
 
     return jobId
 
