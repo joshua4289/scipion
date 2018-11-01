@@ -102,7 +102,7 @@ class ProtMotionCorr(ProtAlignMovies):
                       label='WARNING! You need to have installed CUDA'
                             ' libraries and a Nvidia GPU')
 
-        form.addHidden(params.GPU_LIST, params.StringParam, default='0',
+        form.addHidden(params.GPU_LIST, params.StringParam, default='',
                       expertLevel=cons.LEVEL_ADVANCED,
                       label="Choose GPU IDs",
                       help="GPU may have several cores. Set it to zero"
