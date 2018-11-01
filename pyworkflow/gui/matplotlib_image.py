@@ -28,15 +28,17 @@ Several Image tools using Matplotlib.
 """
 
 import Tkinter as tk
-import matplotlib
+
 import numpy as np
 
 try:
+    import matplotlib
     matplotlib.use('TkAgg')
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     import matplotlib.pyplot as plt
 except:
-    #matplotlib.use('Agg')
+    import matplotlib
+    matplotlib.use('Agg')
     plt = None
 
 from matplotlib.figure import Figure
