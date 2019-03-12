@@ -165,6 +165,7 @@ class ScipionRunner(CommonService):
             if prot['object.className'] == "ProtGautomatch":
                 prot['particleSize'] = float(session['particleSize'])
                 prot['minDist'] = float(session['minDist'])
+                prot['boxSize'] = boxSize
 
 
             if prot['object.className'] == "ProtCTFFind":
