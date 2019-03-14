@@ -1,0 +1,7 @@
+[workflows.services]
+GautomatchRunner = scipilo.consumers.zoc_gautomatch_consumer:GautomatchRunner
+GctfRunner = scipilo.consumers.zoc_gctf_consumer:GctfRunner
+MotionCor2Runner = scipilo.consumers.zoc_mc2_consumer:MotionCor2Runner
+Relion2DRunner = scipilo.consumers.zoc_relion_refine_consumer:Relion2DRunner
+ScipionRunner = scipilo.consumers.scipion_consumer:ScipionRunner
+

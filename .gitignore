@@ -67,7 +67,7 @@ foo.txt
 /pyworkflow/web/pages/resources/install/
 scipion_web_tools_django.log
 static/
-
+scipion/zocalo/dist/
 
 # Scipion
 /config/*.conf
