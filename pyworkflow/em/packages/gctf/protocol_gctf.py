@@ -274,6 +274,7 @@ class ProtGctf(em.ProtCTFMicrographs):
             self._params['micFn'] = micFnMrc
             self._params['micDir'] = micDir
             self._params['gctfOut'] = self._getCtfOutPath(micDir)
+            print >> sys.stdout, "Updated the paths dictionary with %s %s %s" %(micFnMrc,micDir,self._getCtfOutPath)
 
         except Exception, ex:
             print >> sys.stderr, "Some error happened: %s" % ex
@@ -283,14 +284,29 @@ class ProtGctf(em.ProtCTFMicrographs):
         try:
             args = self._args % self._params
             self.runJob(self._getProgram(), args,  env=self._getEnviron())
+
         except:
             print("ERROR: Gctf has failed for micrograph %s" % micFnMrc)
 
+
         psdFile = self._getPsdPath(micDir)
+        #print >> sys.stdout, "Going to move PSD file %s" %psdFile
         ctffitFile = self._getCtfFitOutPath(micDir)
+        import time
+        time.sleep(5)
+
+        #print >> sys.stdout, "Going to move micFnCtfFit file %s   to ctffitFile file %s" %(micFnCtfFit,ctffitFile)
+        
+        #Going to move ctffit file Runs/000122_ProtGctf/extra/
+        #GridSquare_404_Data_FoilHole_5419591_Data_5417705_5417706_20180306_2106-140228_aligned_mic/ctfEstimation_EPA.txt
+
         pwutils.moveFile(micFnCtf, psdFile)
         pwutils.moveFile(micFnCtfFit, ctffitFile)
+        
+
         pwutils.cleanPath(self.getProject().getPath('micrographs_all_gctf.star'))
+
+        #print("I just cleaned the micrograph star ")
 
         # Let's notify that this micrograph has been processed
         # just creating an empty file at the end (after success or failure)

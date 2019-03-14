@@ -36,7 +36,6 @@ from subprocess import check_call
 from utils import greenStr, envVarOn
 
 
-# The job should be launched from the working directory!
 def runJob(log, programname, params,           
            numberOfMpi=1, numberOfThreads=1, 
            hostConfig=None, env=None, cwd=None, gpuList=None):
@@ -62,7 +61,21 @@ def runCommand(command, env=None, cwd=None):
         # This is like "ulimit -u 99999999", so we can create core dumps
 
     # TODO: maybe have to set PBS_NODEFILE in case it is used by "command"
-    # (useful for example with gnu parallel)
+
+
+    #send_command_to dials.python
+    def runzocaloJob(log, programname, params,
+           numberOfMpi=1, numberOfThreads=1,
+           hostConfig=None, env=None, cwd=None, gpuList=None):
+
+
+
+
+        pass
+
+
+
+
     check_call(command, shell=True, stdout=sys.stdout, stderr=sys.stderr,
                env=env, cwd=cwd)
     # It would be nice to avoid shell=True and calling buildRunCommand()...
@@ -132,3 +145,6 @@ def isProcessAlive(pid):
     except psutil.NoSuchProcess, e:
         return False
 
+def send_command_as_zocalo_recipe(command):
+    print("I reached the zocalo place ")
+    pass

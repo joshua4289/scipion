@@ -78,10 +78,28 @@ except:
 project = Project(projectPath)
 project.load()
 
+#TODO:get Diamond template 
+#/dls_sw/m02/scripts/templates/pablo_2d_streamer.json
+#TODO:get timeout from Protimport Movies 
+#divide by 60 e.g if threshold=2 tme is 2*60 
+
+
 count = 0
-threshold_to_kill_daemon = 172800  # this is a temporary hack till I get access to ProtImportMovies is_finished 
+ 
+#this is a temporary hack till I get access to ProtImportMovies is_finished 
 while True:
     runs = project.getRuns()
+
+    for r in runs:
+        if isinstance(r,ProtImportMovies) and hasattr(r, 'timeout'):
+            threshold_to_kill_daemon = r.timeout
+            
+            print(threshold_to_kill_daemon)
+
+
+    
+    # if hasattr(import_mics,'ProtImportMovies'):
+    #         print ("found")
     #for r in runs:
 
         

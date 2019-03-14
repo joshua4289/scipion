@@ -69,6 +69,16 @@ class Relion2DRunner(CommonService):
         # p2 = Popen('touch done.tmp' ,cwd=scipion_dir,shell=True)
         # p2.wait()
 
+        done_file_name = os.path.join(scipion_dir, 'done_2D.tmp')
+        with open(done_file_name, 'w+') as done_file:
+
+            import datetime
+            done_file.write("%s\n" %(datetime.datetime.now()))
+            done_file.write("Complete\n")
+
+
+
+
         self.log.info("Finish running relion 2d Zocalo")
         rw.transport.ack(header)
         rw.send([])

@@ -40,6 +40,7 @@ import mrcfile
 import pyworkflow.utils as pwutils
 import pyworkflow.protocol.params as params
 from pyworkflow import VERSION_1_1
+from pyworkflow.protocol import getUpdatedProtocol
 from pyworkflow.em import ImageHandler
 from pyworkflow.em.protocol import ProtMonitor, Monitor, PrintNotifier
 from pyworkflow.em.protocol import ProtImportMovies, ProtAlignMovies, ProtCTFMicrographs
@@ -127,7 +128,7 @@ class MonitorISPyB(Monitor):
     def step(self):
         self.info("MonitorISPyB: only one step")
 
-        prots = [self.getUpdatedProtocol(p) for p in self.inputProtocols]
+        prots = [getUpdatedProtocol(p) for p in self.inputProtocols]
         finished = [] # store True if protocol not running
         updateImageIds = []  # Store obj ids that have changes
         updateAlignIds = []  # Store obj ids that have changes
