@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# dlstbx.go
+# zocalo.service
 #   Process a datacollection
 # RELION2D RECIPIE SUBMITTER
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
   recipe = {}
   recipe['1'] = {}
   recipe['1']['service'] = "Relion_refine_runner"
-  recipe['1']['queue'] = "Relion_refine_runner"
+  recipe['1']['queue'] = "ScipionRelion2D"
   recipe['1']['parameters'] = {}
   recipe['1']['parameters']['arguments'] = sys.argv[1:]
   recipe['1']['parameters']['cwd'] = os.getcwd()
@@ -70,10 +70,7 @@ if __name__ == '__main__':
 
 
 
-  #send_current_dir_to_bash()
-  #print(recipe['parameters']['arguments'])
-
-  #lazy_pprint(message)
+  
 
   stomp.connect()
 
@@ -87,34 +84,6 @@ if __name__ == '__main__':
     message
   )
 
-  # def relion_callback(rw, headers, message):
-  #     print('IN THE CALLBACK:')
-  #     print(rw.recipe_step['parameters'])
-  #     print(message)
-  #
-  #
-  # #stomp2._subscribe(1,reply_to, update_jobid)
-  # stomp2 = StompTransport()
-  # stomp2.connect()
-  # workflows.recipe.wrap_subscribe(stomp2, reply_to, relion_callback)
-  #
-
-  # def waitForProcessToComplete():
-  
-  #   import time
-  #   time.sleep(5*60)
-  #TODO:
-  # While True (wait for consumer)
-    # If message succeded:
-      # exit gently
-    # else (error somewhere)
-      # exit not gently (with error meesage)
-
-    # Sleep some time
-  #print("\nMotioncor2 job submitted")  
-  
-
-  #waitForProcessToComplete()
 
   
   

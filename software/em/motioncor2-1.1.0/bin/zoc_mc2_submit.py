@@ -1,6 +1,6 @@
 
 
-# dlstbx.go
+# zocalo.service
 #   Process a datacollection
 #
 
@@ -47,20 +47,13 @@ if __name__ == '__main__':
 
   recipe = {}
   recipe['1'] = {}
-  recipe['1']['service'] = "MotionCor2_runner"
+  recipe['1']['service'] = "ScipionMotionCor2"
   recipe['1']['queue'] = "MotionCor2_runner"
   recipe['1']['parameters'] = {}
   recipe['1']['parameters']['arguments'] = sys.argv[1:] #params_without_spaces
   recipe['1']['parameters']['cwd'] = os.getcwd()
   recipe['start'] = [[1, []]]
-  #message['custom_recipe'] = recipe
-  #recipe['1']['output']= 2
 
-  #try thumbnaling through zocalo
-  # recipe['2'] = {}
-  # recipe['2']['service'] = "scipion_thumbnail_runner"
-  # recipe['2']['queue'] = "scipion_thumnbnail_runner"
-  # recipe['2']['parameters']=sys.argv[1:]
 
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# dlstbx.go
+# zocalo.service
 #   Process a datacollection
 #
 
@@ -21,11 +21,7 @@ import uuid
 # Runs/000122_ProtGctf/extra/GridSquare_401K_Data_FoilHole_5419591_Data_5417705_5417706_20180306_2106-140228_aligned_mic/ctfEstimation.txt
 
 def get_output_file(input_file):
-    # output_file = os.path.join(os.getcwd(),
-    #                            os.path.dirname(input_file),
-    #                            os.path.splitext(os.path.basename(input_file)),
-    #
-    #                             'ctfEstimation.txt')
+   
 
     tmp1 = str(os.path.join(os.getcwd(),
                             os.path.dirname(input_file),
@@ -34,9 +30,7 @@ def get_output_file(input_file):
 
     corr_tmp1 = re.sub('(\d+.)ProtGctf/tmp', r'\1ProtGctf/extra', tmp1)
 
-    # print ("INPUT is %s" %str(input_file))
-    # print("THIS IS %s" %corr_tmp1)
-
+    
     output_file = os.path.join(os.getcwd(),
                                os.path.dirname(input_file),
                                os.path.splitext(os.path.basename(input_file))[0],
@@ -51,9 +45,7 @@ def lazy_pprint(*args, **kwargs):
     # pprint(*args, **kwargs)
 
 
-# def get_output_file(file_path):
-#   print(os.path.dirname(get_output_file()))
-#   return os.path.dirname(get_output_file())
+
 
 if __name__ == '__main__':
 
@@ -77,22 +69,14 @@ if __name__ == '__main__':
     recipe = {}
     recipe['1'] = {}
     recipe['1']['service'] = "Gctf_runner"
-    recipe['1']['queue'] = "Gctf_runner"
+    recipe['1']['queue'] = "ScipionGctf"
     recipe['1']['parameters'] = {}
     recipe['1']['parameters']['arguments'] = sys.argv[1:] + ['>', output_file]
     recipe['1']['parameters']['cwd'] = os.getcwd()
 
     message['custom_recipe'] = recipe
 
-    # reply_to = 'transient.gctf.%s' % str(uuid.uuid4())
-    # recipe['1']['output'] = 2
-    # recipe['2'] = {}
-    # recipe['2']['service'] = "relion_refine_call_back"
-    # recipe['2']['queue'] = reply_to
-    # recipe['2']['parameters'] = {}
-    # recipe['2']['output'] = 3
-    # recipe['3'] = {}
-
+    
     recipe['start'] = [[1, []]]
 
     stomp.connect()
@@ -105,9 +89,6 @@ if __name__ == '__main__':
         message
     )
 
-    # So that BASH can pick this up
-
-    # get_output_file()
+    
     print(output_file)
 
-# print("\nMotioncor2 job submitted")
