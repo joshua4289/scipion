@@ -7,7 +7,7 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class Relion2DRunner(CommonService):
+class ScipionRelion2D(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
@@ -20,7 +20,7 @@ class Relion2DRunner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        queue_name = "Relion_refine_runner"
+        queue_name = "ScipionRelion2D"
         self.log.info("queue that is being listended to is %s" % queue_name)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
                                         self.run_relion_2d, acknowledgement=True, log_extender=self.extend_log,
