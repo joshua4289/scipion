@@ -24,8 +24,8 @@ def run_zocalo_gautomatch():
     # TODO: add the part of exit where script exits after creating png of whatever 
 
     cmd = ('source /etc/profile.d/modules.sh;'
-           'module load dials;'
-           'dials.python ' + script + " "
+           'module load python/ana;'
+           'python ' + script + " "
            )
 
     print(cmd + " ".join(args))
