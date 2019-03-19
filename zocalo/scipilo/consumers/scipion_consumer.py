@@ -36,7 +36,7 @@ class ScipionRunner(CommonService):
         session = rw.recipe_step['parameters']
 
         # build the directories,
-        project_name, gda2_workspace_dir,project_path,user_workspace = self.create_project_paths(session)
+        project_name, gda2_workspace_dir,project_path,user_workspace,ispyb_dir = self.create_project_paths(session)
 
 
         template_filename = '/dls_sw/%s/scripts/templates/pablo_2d_streamer.json' % (session['microscope'].lower())
@@ -48,9 +48,9 @@ class ScipionRunner(CommonService):
         timestamp_from_project = str(project_name).split('_')[-1]
         json_basename = 'scipion_template_{}.json'.format(timestamp_from_project)
 
-        #TODO : move json to user_workspace_dir not gda2_workspace_dir
+        # new webapp structure : moved to ispyb dir
 
-        json_filename = os.path.join(str(gda2_workspace_dir), json_basename)
+        json_filename = os.path.join(str(ispyb_dir), json_basename)
 
 
         # build the json  with params from webapp
@@ -116,7 +116,7 @@ class ScipionRunner(CommonService):
 
 
 
-        return str(project_name), str(gda2_workspace_dir),str(project_path),str(user_workspace_dir)
+        return str(project_name), str(gda2_workspace_dir),str(project_path),str(user_workspace_dir),str(ispyb_dir)
 
 
     def find_visit_dir_from_session_info(self, session):
@@ -294,8 +294,4 @@ def calculate_ctfest_range(samplingRate):
         return (0.03, 0.35)
 
 
-# FIXES : https://github.com/scipion-em/scipion-em-relion/blob/relion3/relion/protocols/protocol_extract_particles.py#L259
-# extra function so can be removed easily
-# def calculate_relion_bgradius(bs):
-#     bg_radius = 0.75 * bs
-#     return float(bg_radius)
+
