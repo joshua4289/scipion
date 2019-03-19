@@ -46,8 +46,8 @@ if __name__ == '__main__':
     # Build a custom recipe
     recipe = {}
     recipe['1'] = {}
-    recipe['1']['service'] = "ScipionGautomatch"
-    recipe['1']['queue'] = "Gautomatch_runner"
+    recipe['1']['service'] = "Gautomatch_runner"
+    recipe['1']['queue'] = "ScipionGautomatch"
     recipe['1']['parameters'] = {}
     recipe['1']['parameters']['arguments'] = sys.argv[1:]
     recipe['1']['parameters']['cwd'] = os.getcwd()
