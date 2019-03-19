@@ -81,3 +81,12 @@ scipion/zocalo/dist/
 
 # Ignore version file
 .devel_version
+#specific ignorig of non-zocalo-ed scipion bins 
+pyworkflow/*
+software/em/*.tgz
+software/em/*
+working_configs/*
+
+# Ignore scipilo build files
+zocalo/build/lib/scipilo/consumers
+zocalo/*.egg*
