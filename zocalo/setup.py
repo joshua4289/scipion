@@ -18,11 +18,11 @@ setup(
     description="Zocalo runners for Scipion",
     entry_points={
         "workflows.services": [
-            "ScipionMain = scipilo.consumers.scipion_consumer:ScipionRunner",
-            "ScipionMotionCor2 = scipilo.consumers.zoc_mc2_consumer:MotionCor2Runner",
-            "ScipionGctf = scipilo.consumers.zoc_gctf_consumer:GctfRunner",
-            "ScipionRelion2D = scipilo.consumers.zoc_relion_refine_consumer:Relion2DRunner",
-            "ScipionGautomatch = scipilo.consumers.zoc_gautomatch_consumer:GautomatchRunner",
+            "ScipionRunner = scipilo.consumers.scipion_consumer:ScipionRunner",
+            "MotionCor2Runner = scipilo.consumers.zoc_mc2_consumer:MotionCor2Runner",
+            "GctfRunner = scipilo.consumers.zoc_gctf_consumer:GctfRunner",
+            "Relion2DRunner = scipilo.consumers.zoc_relion_refine_consumer:Relion2DRunner",
+            "GautomatchRunner = scipilo.consumers.zoc_gautomatch_consumer:GautomatchRunner",
         ],
     },
     install_requires=requirements,
