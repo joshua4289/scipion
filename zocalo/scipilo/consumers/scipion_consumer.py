@@ -289,9 +289,9 @@ def calculateBoxSize(samplingRate, particleSize):
 def calculate_ctfest_range(samplingRate):
 
     if samplingRate < 1:
-        return (0.01, 0.12)
+        return (0.01, 0.35)
     else:
-        return (0.03, 0.12)
+        return (0.03, 0.35)
 
 
 # FIXES : https://github.com/scipion-em/scipion-em-relion/blob/relion3/relion/protocols/protocol_extract_particles.py#L259
