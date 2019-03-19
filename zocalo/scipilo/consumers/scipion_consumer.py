@@ -39,7 +39,7 @@ class ScipionRunner(CommonService):
         project_name, gda2_workspace_dir,project_path,user_workspace,ispyb_dir = self.create_project_paths(session)
 
 
-        template_filename = '/dls_sw/%s/scripts/templates/pablo_2d_streamer.json' % (session['microscope'].lower())
+        template_filename = '/dls_sw/%s/scripts/templates/workflow.json' % (session['microscope'].lower())
 
 
         # got the timestamp from project
