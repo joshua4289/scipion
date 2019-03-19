@@ -130,7 +130,7 @@ class ScipionRunner(CommonService):
 
 
         project_year = timestamp[:4]
-        project_path = "/dls/tmp/jtq89441/dls/{}/data/{}/{}/".format(str(session['microscope']).lower(), project_year,session['session_id'])
+        project_path = "/dls/{}/data/{}/{}/".format(str(session['microscope']).lower(), project_year,session['session_id'])
 
 
 
@@ -238,8 +238,7 @@ class ScipionRunner(CommonService):
                                project_json, gda2_workspace_dir]
         create_project_cmd = self._create_prefix_command(create_project_args)
 
-        print("the command")
-        print(create_project_cmd)
+
 
 
         p1 = Popen(create_project_cmd, cwd=str(gda2_workspace_dir), stderr=PIPE, stdout=PIPE, shell=True)
@@ -259,7 +258,6 @@ class ScipionRunner(CommonService):
 
 
             self.sleeper(2)
-            print("schedule command is " + schedule_project_cmd)
             self.log.info("schedule command is ".format(schedule_project_cmd))
 
             refresh_project_cmd = self._start_refresh_project(project_name)
