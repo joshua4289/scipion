@@ -27,11 +27,14 @@
 # **************************************************************************
 
 import sys
-import os,signal
+import os, signal
 from time import sleep
 from pyworkflow.manager import Manager
 from pyworkflow.project import Project
-import pyworkflow.utils as pwutils
+import pyworkflow.utils as utils
+
+
+# import pyworkflow.em.protocol.protocol_import.micrographs as imp
 
 
 def usage(error):
@@ -62,7 +65,7 @@ else:
 path = os.path.join(os.environ['SCIPION_HOME'], 'pyworkflow', 'gui', 'no-tkinter')
 sys.path.insert(1, path)
 
-# Create a new project
+# Create a new project object
 manager = Manager()
 
 if not manager.hasProject(projName):
@@ -78,44 +81,41 @@ except:
 project = Project(projectPath)
 project.load()
 
-#TODO:get Diamond template 
-#/dls_sw/m02/scripts/templates/pablo_2d_streamer.json
-#TODO:get timeout from Protimport Movies 
-#divide by 60 e.g if threshold=2 tme is 2*60 
+
 
 
 count = 0
- 
-#this is a temporary hack till I get access to ProtImportMovies is_finished 
+# FIXME: get thresold_in_seconds from the json or scipion Import
+threshold_in_seconds = 600
+
+
+
+
+
+
+# this is a temporary hack till I get access to ProtImportMovies is_finished
 while True:
     runs = project.getRuns()
 
-    for r in runs:
-        if isinstance(r,ProtImportMovies) and hasattr(r, 'timeout'):
-            threshold_to_kill_daemon = r.timeout
-            
-            print(threshold_to_kill_daemon)
 
 
-    
-    # if hasattr(import_mics,'ProtImportMovies'):
-    #         print ("found")
-    #for r in runs:
 
-        
+    cycles = (threshold_in_seconds / wait)
+    import time
+    time.sleep(wait)
 
-    #     if r.getRunName =='ProtImportMovies':
-    #         print "Found protImport "
     pid_of_demon = os.getpid()
-    # # if import timeout is done do os.sigkill() pid_of_demon
-    sleep(wait)
-    
+
     count += 1
-    if count == threshold_to_kill_daemon :
+    if count == cycles:
         print "The gda2 read_only_project was killed properly"
-        os.kill(pid_of_demon,signal.SIGTERM)
-        
+        os.kill(pid_of_demon, signal.SIGTERM)
+        sys.exit(0)
 
 
 
+    # for r in runs:
+    #  if isinstance(r,imp.ProtImportMovies) and hasattr(r,'timeout'):
+    #  	threshold_to_kill_daemon = r.timeout
+    #      print(threshold_to_kill_daemon)
 
