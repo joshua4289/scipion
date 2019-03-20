@@ -31,7 +31,7 @@ setup(
     name="scipilo",
     packages=find_packages(),
     setup_requires=setup_requirements,
-    version="0.3",
+    version="0.5",
     zip_safe=False,
 )
 
