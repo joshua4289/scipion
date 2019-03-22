@@ -86,7 +86,7 @@ project.load()
 
 count = 0
 # FIXME: get thresold_in_seconds from the json or scipion Import
-threshold_in_seconds = 600
+threshold_in_seconds = 43200
 
 
 
