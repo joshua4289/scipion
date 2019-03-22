@@ -8,14 +8,14 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class GautomatchRunner(CommonService):
+class ScipionGautoMatch(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
-    _service_name = "Gautomatch_runner"
+    _service_name = "Scipion_Gautomatch"
 
     # Logger name
-    _logger_name = 'Gautomatch.zocalo.services.runner'
+    _logger_name = 'scipion.gautomatch.zocalo.services.runner'
 
     def initializing(self):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
@@ -65,24 +65,15 @@ class GautomatchRunner(CommonService):
 
 
         p1.wait()
-        print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
-        print("THESE ARE THE ERROR MESSAGES")
-        #print(err_project_cmd)
 
 
-        # p2 = Popen('touch done.tmp' ,cwd=scipion_dir,shell=True)
-        # p2.wait()
+
+
 
         self.log.info("Finish running Gautomatch Zocalo")
 
         rw.transport.ack(header)
-        #rw.send([])
 
-            # queue_name = str(t.Gautomatch_runner.
-            # self.log.info("queue that is being listended to is %s" % queue_name)
-            # workflows.recipe.wrap_subscribe(self._transport, queue_name,
-            #                                 self.run_Gautomatch, acknowledgement=True, log_extender=self.extend_log,
-            #                                 allow_non_recipe_messages=True)
 
     def shutdown_consumer(self):
         ''' Shutdown Consumer based on the timeout mentioned in the Import step of workflow '''
