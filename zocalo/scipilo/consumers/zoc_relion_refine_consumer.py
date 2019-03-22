@@ -7,14 +7,14 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class Relion2DRunner(CommonService):
+class ScipionRelion2D(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
-    _service_name = "Relion_refine_runner"
+    _service_name = "Scipion_Relion2D"
 
     # Logger name
-    _logger_name = 'relion.zocalo.services.runner'
+    _logger_name = 'scipion.relion2d.zocalo.services.runner'
 
     def initializing(self):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
@@ -61,9 +61,9 @@ class Relion2DRunner(CommonService):
         out_project_cmd, err_project_cmd = p1.communicate()
 
         p1.wait()
-        print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
-        print("THESE ARE THE ERROR MESSAGES")
-        print(err_project_cmd)
+        # print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
+        # print("THESE ARE THE ERROR MESSAGES")
+        # print(err_project_cmd)
 
 
         # p2 = Popen('touch done.tmp' ,cwd=scipion_dir,shell=True)

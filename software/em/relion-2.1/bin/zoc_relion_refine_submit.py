@@ -46,7 +46,7 @@ if __name__ == '__main__':
   # Build a custom recipe 
   recipe = {}
   recipe['1'] = {}
-  recipe['1']['service'] = "Relion_refine_runner"
+  recipe['1']['service'] = "Scipion_Relion2D"
   recipe['1']['queue'] = "ScipionRelion2D"
   recipe['1']['parameters'] = {}
   recipe['1']['parameters']['arguments'] = sys.argv[1:]
