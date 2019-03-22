@@ -7,14 +7,14 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class MotionCor2Runner(CommonService):
+class ScipionMotionCor2(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
-    _service_name = "MotionCor2_runner"
+    _service_name = "Scipion_MotionCor2"
 
     # Logger name
-    _logger_name = 'MotionCor2.zocalo.services.runner'
+    _logger_name = 'scipion.motioncor2.zocalo.services.runner'
 
     def initializing(self):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
@@ -36,7 +36,7 @@ class MotionCor2Runner(CommonService):
         # get the parameters
 
         session = rw.recipe_step['parameters']
-        self.log.info(session)
+
         arguments = session['arguments']
         scipion_dir = session['cwd']
 
@@ -61,9 +61,7 @@ class MotionCor2Runner(CommonService):
         out_project_cmd, err_project_cmd = p1.communicate()
 
         p1.wait()
-        print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
-        print("THESE ARE THE ERROR MESSAGES ")
-        print(err_project_cmd)
+
 
         self.log.info("Finish running MotionCor2 Zocalo")
         rw.transport.ack(header)
