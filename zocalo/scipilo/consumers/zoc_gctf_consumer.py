@@ -7,14 +7,14 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class GctfRunner(CommonService):
+class ScipionGctf(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
-    _service_name = "Gctf_runner"
+    _service_name = "Scipion_Gctf"
 
     # Logger name
-    _logger_name = 'Gctf.zocalo.services.runner'
+    _logger_name = 'scipion.gctf.zocalo.services.runner'
 
     def initializing(self):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
@@ -58,16 +58,9 @@ class GctfRunner(CommonService):
 
         out_project_cmd, err_project_cmd = p1.communicate()
         self.log.info("Gctf errors are :%s" %(err_project_cmd))
-			        
-
-        # Read output and feedback ...but GCTF does not do this
-        # while p1.poll() is None: #True or p1.returncode != 0
-        #     print(p1.stdout.readline())
-        #
-        # t_queue = (rw.recipe[rw.recipe_pointer + 1]['queue'])
 
         p1.wait()
-        print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
+        #print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
         
 
         done_file_name = os.path.join(scipion_dir, 'done.tmp')

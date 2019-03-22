@@ -68,7 +68,7 @@ if __name__ == '__main__':
     # Build a custom recipe
     recipe = {}
     recipe['1'] = {}
-    recipe['1']['service'] = "Gctf_runner"
+    recipe['1']['service'] = "Scipion_Gctf"
     recipe['1']['queue'] = "ScipionGctf"
     recipe['1']['parameters'] = {}
     recipe['1']['parameters']['arguments'] = sys.argv[1:] + ['>', output_file]
