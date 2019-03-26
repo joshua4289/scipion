@@ -42,9 +42,7 @@ class ScipionRelion2D(CommonService):
 
         self.log.info("Scipion Dir is %s" % scipion_dir)
 
-        # modify the GPU flag to be the correct GPU for this consumer
-        # gpu_index = arguments.index('--gpu') + 1
-        # arguments[gpu_index] = "999"  #os.getenv('SGE_HGR_gpu', 'GPU1')[3]
+
 
         self.log.info("Arguments are '%s'" % ' '.join(arguments))
 
@@ -61,13 +59,6 @@ class ScipionRelion2D(CommonService):
         out_project_cmd, err_project_cmd = p1.communicate()
 
         p1.wait()
-        # print ("SCIPION WORK DIR IS  %s" %(scipion_dir))
-        # print("THESE ARE THE ERROR MESSAGES")
-        # print(err_project_cmd)
-
-
-        # p2 = Popen('touch done.tmp' ,cwd=scipion_dir,shell=True)
-        # p2.wait()
 
         done_file_name = os.path.join(scipion_dir, 'done_2D.tmp')
         with open(done_file_name, 'w+') as done_file:
