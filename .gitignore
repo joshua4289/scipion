@@ -48,7 +48,7 @@
 /software/log
 /software/man
 /software/share
-!/software/em/xmipp
+/software/em/xmipp
 
 gmon.out
 *~
@@ -88,5 +88,5 @@ software/em/*
 working_configs/*
 
 # Ignore scipilo build files
-zocalo/build/lib/scipilo/consumers
-zocalo/*.egg*
+zocalo/build/lib/*
+zocalo/*egg*
