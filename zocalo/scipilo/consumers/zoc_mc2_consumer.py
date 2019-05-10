@@ -43,8 +43,20 @@ class ScipionMotionCor2(CommonService):
         self.log.info("Scipion Dir is %s" % scipion_dir)
 
         # modify the GPU flag to be the correct GPU for this consumer
+
+        #find the next index after -Gpu
+        #SGE_HGR_GPU gives GPU0 GPU1 if 2 gpu system 
+
+       
         gpu_index = arguments.index('-Gpu') + 1
-        arguments[gpu_index] = os.getenv('SGE_HGR_gpu', 'GPU1')[3]
+        
+        #gives 0
+        #this works with qloin and ssh because if sge_hgr variable not set it will default to gpu1 and the value u get will be 1
+        #but in qsub where sge_hgr is set value you get is 0
+        #convoluted logic dependent on not set rather than set 
+        #TODO:convert string to list and find number of GPU's use range to then set GPU'ids
+
+        arguments[gpu_index] = os.getenv('SGE_HGR_gpu', 'GPU1')[8]
 
         self.log.info("Arguments are '%s'" % ' '.join(arguments))
 
