@@ -3,8 +3,10 @@ from workflows.services.common_service import CommonService
 import workflows.recipe
 from subprocess import PIPE, Popen
 
-
-from pathlib2 import Path 
+try:
+    from pathlib2 import Path
+except:
+    from  pathlib import Path
 
 
 # Active MQ Scipion Consumer started as gda2
@@ -22,12 +24,12 @@ class ScipionRunner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        #FIXME: this is a list specific to the instance / consumer will work only in a one-beamline per consumer case
+
         # Add a .project file in the session which is an updated list/ json of running_projects . Only 1 project will run  all the other processed projects will be killed
         self.running_projects = list()
 
         queue_name = "ScipionMainDev"
-        #queue_name = "TestScipionWF"
+
         self.log.info("queue that is being listended to is %s" % queue_name)
 
         #self._transport.subscribe(queue_name,self.find_json_from_recipe)
@@ -52,33 +54,24 @@ class ScipionRunner(CommonService):
         # rw is None
         # header is the timestamp
 
-        
-
-
-
-
         json_file = message['scipion_workflow']
         json_path = (Path(json_file))
-        
-
 
         self.log.info("Initial start processing json %s " %json_file)
         self.log.info("Finish running scipion workflow finder ")
 
 
-
-
-        self.find_session_id(json_path)
+        #self.find_session_id(json_path)
 
         project_name = self.create_project_and_process(json_path)
 
         # check and kill any old scipion projects in the visit
 
-        #self._on_message(project_name)
 
-        self.log.info("rw %r" %rw)
-        self.log.info("header %r" %header)
-        self.log.info("message %r"%message)
+
+        # self.log.info("rw %r" %rw)
+        # self.log.info("header %r" %header)
+        # self.log.info("message %r"%message)
 
 
 
@@ -86,11 +79,6 @@ class ScipionRunner(CommonService):
         #so cannot use any of the recipe acknowledge mechanisms
 
         self.transport.ack(header)
-
-
-
-
-
 
         return json_path
 
@@ -138,7 +126,7 @@ class ScipionRunner(CommonService):
 
         projects_file = visit_dir/'.projects'/'project.txt'
 
-        stop_project_list = []
+        #stop_project_list = []
         with open (str(projects_file) , 'a+') as pf:
 
             pf.write(project_name)
@@ -154,14 +142,6 @@ class ScipionRunner(CommonService):
 
             self.log.info("list of projects is %s " % live_project_list)
 
-
-            #from collections import OrderedDict
-            #project_live_dict = OrderedDict.fromkeys(live_project_list)
-
-
-
-
-            #self.log.info("DIFF set projects is %s " % diff_set)
 
 
             #pop the first item and work your way down last item is latest project
@@ -232,9 +212,14 @@ class ScipionRunner(CommonService):
         ''' start processing by calling various functions  '''
 
         timestamp = self.create_timestamp()
-        visit_dir = json_path.parents[1]
+
+        # go 2 levels up from .ispyb/processing to visit dir
+
+        visit_dir = json_path.parents[2]
+
         project_name = visit_dir.stem + '_' + timestamp
         workspace_dir = visit_dir / 'processed'
+        self.log.info("visit dir is %s" % visit_dir)
         workspace_dir.mkdir(parents=True, exist_ok=True)
         workflow = (workspace_dir / ("scipion_template_" + timestamp)).with_suffix(".json")
 
@@ -260,6 +245,7 @@ class ScipionRunner(CommonService):
         # pathlib2 object read / modify values and write out
         # TODO:
         # FIXME:find a cleaner way to do this without list indices this should be a dictionary then it's independent of the type of template json
+        #FIXME:posted json is a list if it was a dict can move away from indices
         # NOTE : These should only be modifications pertaining to CTF fixes < 0.5 A/Px and
         # extract box size calculations rest is handled during the writing of the initial json
 
@@ -286,6 +272,8 @@ class ScipionRunner(CommonService):
 
         import shutil
         shutil.copy(str(json_path), str(workflow))
+        self.log.info('%s file exists' %workflow)
+
 
 
         create_project_args = ['cd', '$SCIPION_HOME;','scipion', '--config $SCIPION_HOME/config/scipion.conf','python',
@@ -301,8 +289,9 @@ class ScipionRunner(CommonService):
 
         self.log.error(err_project_cmd)
         self.log.info("Create project script SUCCESS")
+        self.log.info("created project with command %s" %create_project_cmd)
         self.log.info('processing started using parmaters in %s ' %workflow)
-        self.log.info('scipion  project started %s'%visit_dir)
+        self.log.info('scipion  project started %s'%workspace_dir)
 
 
 
@@ -311,15 +300,17 @@ class ScipionRunner(CommonService):
 
         if p1.returncode != 0:
             
-            self.log.error("Could not create project at {}".format(visit_dir))
+            self.log.error("Could not create project at {}".format(workspace_dir))
             self.log.error("create project error at {}".format(out_project_cmd,err_project_cmd))
             self.log.error('main thread consumer being killed')
-            import sys
-            sys.exit(127)
+
+
+
             #TODO: kill _the consumer with an exit the controller logic will restart it
 
 
         else:
+            #kill other processing projects in the visit
 
             self._on_message(str(project_name), visit_dir)
 
@@ -339,15 +330,6 @@ class ScipionRunner(CommonService):
             refresh_project_cmd = self._start_refresh_project(project_name)
             Popen(refresh_project_cmd, cwd=str(workspace_dir), shell=True)
 
-
-
-            # refresh_project_cmd = self._start_refresh_project(project_name)
-            # Popen(refresh_project_cmd, cwd=str(workspace_dir), shell=True)
-            #
-            #
-            # self.sleeper(2)
-            # self.log.info("gui refresh daemon")
-
             return project_name
 
 
@@ -359,6 +341,9 @@ class ScipionRunner(CommonService):
                         400, 420, 432, 448, 450, 462, 480, 486, 500, 504, 512, 520, 528, 546, 560, 576, 588,
                         600, 640, 648, 650, 660, 672, 686, 700, 702, 704, 720, 726, 728, 750, 768, 770, 784,
                         800, 810, 840, 882, 896, 910, 924, 936, 972, 980, 1008, 1014, 1020, 1024]
+
+
+        #convert largest axis/diameter to pixel then add tolerance  factor
 
         exactBoxSize = int((particleSize * 2) / samplingRate) * 1.2
         for bs in emanBoxSizes:
