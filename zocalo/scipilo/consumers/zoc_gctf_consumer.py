@@ -7,7 +7,7 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class ScipionGctf(CommonService):
+class GctfRunner(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name

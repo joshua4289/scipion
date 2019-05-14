@@ -8,7 +8,7 @@ import os, re
 
 # Active MQ Scipion Consumer started as gda2
 
-class ScipionGautoMatch(CommonService):
+class GautomatchRunner(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
