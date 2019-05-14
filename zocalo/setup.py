@@ -18,7 +18,7 @@ setup(
     description="Zocalo runners for Scipion",
     entry_points={
         "workflows.services": [
-            "ScipionRunner = scipilo.consumers.scipion_consumer:ScipionRunner",
+            "ScipionRunner = scipilo.consumers.test_ispyb_scipion_consumer_project_stop:ScipionRunner",
             "MotionCor2Runner = scipilo.consumers.zoc_mc2_consumer:MotionCor2Runner",
             "GctfRunner = scipilo.consumers.zoc_gctf_consumer:GctfRunner",
             "Relion2DRunner = scipilo.consumers.zoc_relion_refine_consumer:Relion2DRunner",
@@ -31,7 +31,7 @@ setup(
     name="scipilo",
     packages=find_packages(),
     setup_requires=setup_requirements,
-    version="0.5",
+    version="0.8",
     zip_safe=False,
 )
 
