@@ -271,8 +271,10 @@ class ScipionRunner(CommonService):
         #
 
         import shutil
+
         shutil.copy(str(json_path), str(workflow))
-        self.log.info('%s file exists' %workflow)
+        self.log.info('copy of %s was completed' %(json_path))
+
 
 
 
