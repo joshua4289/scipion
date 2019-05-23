@@ -8,7 +8,7 @@ from subprocess import Popen
 import sys
 import os
 
-TIMEOUT = 60
+TIMEOUT = 120 # timeonut handles the main loop 60s fails on NFS data reads 
 ZO_SCIPION_HOME="/dls_sw/apps/scipion/1_2_1_headless/scipion/zocalo"
 
 
