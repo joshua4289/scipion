@@ -70,7 +70,7 @@ if __name__ == '__main__':
         # remove the extra done file when program1
 
 
-    if os.path.exits(extra_done_file):
+    if os.path.exists(extra_done_file):
         os.remove(extra_done_file)
         sys.exit(0)
 
