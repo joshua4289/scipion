@@ -48,7 +48,7 @@ if __name__ == '__main__':
   recipe = {}
   recipe['1'] = {}
   recipe['1']['service'] = "Scipion_MotionCor2"
-  recipe['1']['queue'] = "ScipionMotionCor2"
+  recipe['1']['queue'] = "scipilo.ScipionMotionCor2"
   recipe['1']['parameters'] = {}
   recipe['1']['parameters']['arguments'] = sys.argv[1:] #params_without_spaces
   recipe['1']['parameters']['cwd'] = os.getcwd()
