@@ -20,7 +20,7 @@ class MotionCor2Runner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        queue_name = "ScipionMotionCor2"
+        queue_name = "scipilo.ScipionMotionCor2"
         self.log.info("queue that is being listended to is %s" % queue_name)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
                                         self.run_MotionCor2, acknowledgement=True, log_extender=self.extend_log,

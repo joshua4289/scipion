@@ -21,7 +21,7 @@ class GautomatchRunner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        queue_name = "ScipionGautomatch"
+        queue_name = "scipilo.ScipionGautomatch"
         self.log.info("queue that is being listended to is %s" % queue_name)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
                                         self.run_Gautomatch, acknowledgement=True, log_extender=self.extend_log,

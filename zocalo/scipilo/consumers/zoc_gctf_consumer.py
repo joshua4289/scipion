@@ -20,7 +20,7 @@ class GctfRunner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        queue_name = "ScipionGctf"
+        queue_name = "scipilo.ScipionGctf"
         self.log.info("queue that is being listended to is %s" % queue_name)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
                                         self.run_Gctf, acknowledgement=True, log_extender=self.extend_log,

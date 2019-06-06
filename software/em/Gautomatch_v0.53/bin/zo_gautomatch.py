@@ -8,14 +8,14 @@ from subprocess import Popen
 import sys
 import os
 
-TIMEOUT = 120 # timeonut handles the main loop 60s fails on NFS data reads 
+TIMEOUT = 30 # timeonut handles the main loop 60s fails on NFS data reads 
 ZO_SCIPION_HOME="/dls_sw/apps/scipion/1_2_1_headless/scipion/zocalo"
 
 
 def run_zocalo_gautomatch():
     script = ZO_SCIPION_HOME + "/" + "zoc_gautomatch_submit.py"
     args = sys.argv[1:]
-
+    #looking for the output of the processs
     automatch_file = str(args[0]).replace('.mrc','_automatch.star')
 
 
@@ -36,7 +36,7 @@ def run_zocalo_gautomatch():
     p1.wait()
 
 
-    # sleep for a ridiculous amount of time
+   
     out = p1.communicate()[0]
     print(out)
 
@@ -49,11 +49,12 @@ def run_zocalo_gautomatch():
     		found = True
     		break
     	else:
-    		print("File not found, waiting...")
-    	time.sleep(10)
-
+		print("File not found, waiting...")
+    		time.sleep(10)
+# whether sucess or failure exit with 0 otherwise the main scipion thread does not move on the next micrograph
     	if (time.time() - start_time) > TIMEOUT:
-    		sys.exit(1)
+                print('timeout exceeded skipping image')
+    		sys.exit(0)
 
     return out
 

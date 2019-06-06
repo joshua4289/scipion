@@ -28,7 +28,7 @@ class ScipionRunner(CommonService):
         # Add a .project file in the session which is an updated list/ json of running_projects . Only 1 project will run  all the other processed projects will be killed
         self.running_projects = list()
 
-        queue_name = "ScipionMainDev"
+        queue_name = "scipilo.ScipionDev"
 
         self.log.info("queue that is being listended to is %s" % queue_name)
 
