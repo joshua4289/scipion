@@ -28,7 +28,7 @@ class ScipionRunner(CommonService):
         # Add a .project file in the session which is an updated list/ json of running_projects . Only 1 project will run  all the other processed projects will be killed
         self.running_projects = list()
 
-        queue_name = "scipilo.ScipionDev"
+        queue_name = "scipilo.ScipionProd"
 
         self.log.info("queue that is being listended to is %s" % queue_name)
 
@@ -253,19 +253,15 @@ class ScipionRunner(CommonService):
 
 
         lowRes, highRes = self.calculate_ctfest_range(float(json_to_modify[0]['samplingRate']))
-        boxSize = self.calculateBoxSize(float(json_to_modify[0]['samplingRate']), float(json_to_modify[4]['particleSize']))
+        boxSize = self.calculateBoxSize(float(json_to_modify[0]['samplingRate']), float(json_to_modify[3]['particleSize']))
 
         # substitutions in  config file (inplace)
 
 
-        if json_to_modify[4]['object.className'] == "ProtGautomatch":
-             json_to_modify[4]['boxSize'] = boxSize
+        if json_to_modify[3]['object.className'] == "ProtGautomatch":
+             json_to_modify[3]['boxSize'] = boxSize
         #
-        if json_to_modify[3]['object.className'] == "ProtCTFFind":
-             json_to_modify[3]['lowRes'] = lowRes
-             json_to_modify[3]['highRes'] = highRes
-        #
-        if json_to_modify[2]['object.className'] == "ProtGctf":
+        if json_to_modify[2]['object.className'] == "ProtCTFFind":
              json_to_modify[2]['lowRes'] = lowRes
              json_to_modify[2]['highRes'] = highRes
         #
@@ -329,9 +325,9 @@ class ScipionRunner(CommonService):
             self.sleeper(2)
             self.log.info("schedule command is ".format(schedule_project_cmd))
 
-            refresh_project_cmd = self._start_refresh_project(project_name)
-            Popen(refresh_project_cmd, cwd=str(workspace_dir), shell=True)
-
+            #refresh_project_cmd = self._start_refresh_project(project_name)
+            #Popen(refresh_project_cmd, cwd=str(workspace_dir), shell=True)
+            # disabled killing because it blocked scipion thread
             return project_name
 
 
