@@ -68,7 +68,7 @@ foo.txt
 /pyworkflow/web/pages/resources/install/
 scipion_web_tools_django.log
 static/
-
+scipion/zocalo/dist/
 
 # Scipion
 /config/*.conf
@@ -82,3 +82,12 @@ static/
 
 # Ignore version file
 .devel_version
+#specific ignorig of non-zocalo-ed scipion bins
+pyworkflow/*
+software/em/*.tgz
+software/em/*
+working_configs/*
+
+# Ignore scipilo build files
+zocalo/build/lib/*
+zocalo/*egg*
