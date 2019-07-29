@@ -88,6 +88,7 @@ software/em/*.tgz
 software/em/*
 working_configs/*
 
-# Ignore scipilo build files
+# Ignore scipilo build files and virualenv 
 zocalo/build/lib/*
+zocalo/venv/*
 zocalo/*egg*
