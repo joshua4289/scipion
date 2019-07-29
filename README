@@ -1,0 +1,5 @@
+this is now on dls_scipion (zocalo) but based on scipion 1.2 
+
+created a seperate branch dls_scipion2_rhel7 
+and pull master of scipion to that branch 
+added zocalo entry points and consumers
