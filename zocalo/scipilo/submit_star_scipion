@@ -1,0 +1,11 @@
+#$ -S /bin/bash
+#$ -cwd
+#$ -P em
+#$ -N start_scipion
+#$ -l redhat_release=rhel6
+#$ -o start_scipion.o -e dtart_scipion.e
+#$ -q admin.q
+#$ -l exclusive
+#$ -l m_mem_free=12G
+
+qsub start_scipion.sh 

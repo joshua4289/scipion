@@ -1,0 +1,6 @@
+This is a DLS specific zocalo folder 
+consumers contains  all the consumers 
+the individual entry points that scipion calls  are in their respective software/em/package_name
+so the scipion.conf is not different in terms of the names of the files BUT those files are symlinked to zocalo recipie submitter scripts
+this ensures that the original binaries don't exist anymore and the folder is clean instead of having the old bits lying around  
+start_services is with the packaged consumers
