@@ -69,14 +69,7 @@ class Scipion2Runner(CommonService):
 
 
 
-        # self.log.info("rw %r" %rw)
-        # self.log.info("header %r" %header)
-        # self.log.info("message %r"%message)
 
-
-
-        #acknowledge the header directly this is not a 'recipe'
-        #so cannot use any of the recipe acknowledge mechanisms
 
         self.transport.ack(header)
 
@@ -108,25 +101,26 @@ class Scipion2Runner(CommonService):
 
 
 
-    def _find_gain_path(self):
+    def _find_gain_path(self,folder):
 
         '''looks in processing/ for gain file in a pre-defined location should be relative to where the the other parts '''
 
         for root, dir, files in os.walk(folder):
 
-            for file in files:
+            for f in files:
 
-                if "gain" or "Gain" in str(file):
-                    print(file)
-                    if file.endswith(('mrc', 'tif', 'tiff', 'dm4')):
-                        return os.path.join(root, file)
+                if "gain" or "Gain" in str(f):
 
-
+                    if f.endswith(('mrc', 'tif', 'tiff', 'dm4')):
+                        return os.path.join(root, f)
 
 
 
-    def _convert_gain(self,dm4_file):
-        """  convert a dm4 gain to mrc helper function """
+
+
+
+    def _convert_gain(self,ip_gain_file):
+        """  convert a dm4 or tiff gain to mrc helper function """
 
         cmd = ('source /etc/profile.d/modules.sh;'
                'module unload EM/imod;'
@@ -134,16 +128,26 @@ class Scipion2Runner(CommonService):
 
         gain_file ='Gain.mrc'
 
-        convert_dm4_args = ['dm2mrc', dm4_file, gain_file]
+        global imod_convert_fmt
 
-        convert_command = cmd + ' '.join(convert_dm4_args)
+
+
+        if str(ip_gain_file.endswith('.dm4')):
+            imod_convert_fmt = ['dm2mrc', ip_gain_file, gain_file]
+
+        if str(ip_gain_file.endswith(('.tiff','.tif'))):
+            imod_convert_fmt = ['tif2mrc', ip_gain_file, gain_file]
+
+
+        convert_command = cmd + ' '.join(imod_convert_fmt)
 
 
         p1 = Popen(convert_command, shell=True)
         out,err = p1.communicate()
         if p1.returncode == 0:
-            self.log("output of dm2mrc %s" % out)
-            self.log.info("%s was not properly converted " % dm4_file)
+            self.log("output of imod format conversion  %s" % out)
+            self.log.info("%s was  properly converted " % ip_gain_file)
+
             return gain_file
 
         else:
@@ -156,7 +160,7 @@ class Scipion2Runner(CommonService):
 
         self.log.info("Scipion running projects are ".format(self.running_projects))
 
-        #TODO: On a new message write out the in-memory list to .projects/projects.txt
+        #On a new message write out the in-memory list to .projects/projects.txt
 
 
         projects_file = visit_dir/'.projects'/'project.txt'
@@ -170,7 +174,7 @@ class Scipion2Runner(CommonService):
 
 
 
-        #TODO: Read txt file and stop project instead of the in-memory list because method needs to be independent of the instance of the consumer
+        #Read txt file and stop project instead of the in-memory list because method needs to be independent of the instance of the consumer
 
         with open(str(projects_file),'r') as pf:
             live_project_list = pf.read().split()
@@ -246,6 +250,8 @@ class Scipion2Runner(CommonService):
 
         ''' start processing by calling various functions  '''
 
+        import shutil
+
         timestamp = self.create_timestamp()
 
         # go 2 levels up from .ispyb/processing to visit dir
@@ -260,6 +266,27 @@ class Scipion2Runner(CommonService):
 
         special_project_dir = visit_dir/'.projects'
         special_project_dir.mkdir(parents=True, exist_ok=True)
+
+
+        #TODO: copy once file has finished writing to disk SuperRes takes a sec
+
+        user_dir =  visit_dir / 'processing'
+
+
+        #gda2 can't write in user space so write in processed
+
+        op_gain_file = Path(workspace_dir/'Gain.mrc')
+
+        ip_gain_file = self._find_gain_path(user_dir)
+
+        mrc_converted_gain = self._convert_gain(ip_gain_file)
+
+        if os.path.exists(mrc_converted_gain):
+            shutil.copy(mrc_converted_gain,op_gain_file)
+            self.log.info("Gain.mrc coppied to processed ")
+
+
+
 
         # This is important because of ACL's on the BEAMLINE has to get correct groups
         # instead of running with the json directly we need to modify some parms from what is posted to determine box size
