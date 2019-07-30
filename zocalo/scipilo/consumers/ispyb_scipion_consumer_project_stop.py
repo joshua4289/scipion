@@ -11,7 +11,7 @@ except:
 
 # Active MQ Scipion Consumer started as gda2
 
-class ScipionRunner(CommonService):
+class Scipion2Runner(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
@@ -28,7 +28,7 @@ class ScipionRunner(CommonService):
         # Add a .project file in the session which is an updated list/ json of running_projects . Only 1 project will run  all the other processed projects will be killed
         self.running_projects = list()
 
-        queue_name = "scipilo.ScipionProd"
+        queue_name = "scipilo.ScipionDev"
 
         self.log.info("queue that is being listended to is %s" % queue_name)
 
@@ -37,7 +37,7 @@ class ScipionRunner(CommonService):
                                         self.find_json_from_recipe, acknowledgement=True, log_extender=self.extend_log,
                                         allow_non_recipe_messages=True)
 
-    
+
 
 
 
@@ -110,14 +110,49 @@ class ScipionRunner(CommonService):
 
     def _find_gain_path(self):
 
-        '''looks for gain file in a pre-defined location should be relative to where the the other parts '''
+        '''looks in processing/ for gain file in a pre-defined location should be relative to where the the other parts '''
 
-        pass
+        for root, dir, files in os.walk(folder):
+
+            for file in files:
+
+                if "gain" or "Gain" in str(file):
+                    print(file)
+                    if file.endswith(('mrc', 'tif', 'tiff', 'dm4')):
+                        return os.path.join(root, file)
 
 
-    def _on_message(self,project_name,visit_dir):
 
-        ''' On new start project message stop  previous running projects '''
+
+
+    def _convert_gain(self,dm4_file):
+        """  convert a dm4 gain to mrc helper function """
+
+        cmd = ('source /etc/profile.d/modules.sh;'
+               'module unload EM/imod;'
+               'module load EM/imod;')
+
+        gain_file ='Gain.mrc'
+
+        convert_dm4_args = ['dm2mrc', dm4_file, gain_file]
+
+        convert_command = cmd + ' '.join(convert_dm4_args)
+
+
+        p1 = Popen(convert_command, shell=True)
+        out,err = p1.communicate()
+        if p1.returncode == 0:
+            self.log("output of dm2mrc %s" % out)
+            self.log.info("%s was not properly converted " % dm4_file)
+            return gain_file
+
+        else:
+            self.log("Error in conversion %s" % err)
+
+
+
+        def _on_message(self,project_name,visit_dir):
+            ''' On new start project message stop  previous running projects '''
 
         self.log.info("Scipion running projects are ".format(self.running_projects))
 
@@ -194,8 +229,8 @@ class ScipionRunner(CommonService):
 
         cmd = ('source /etc/profile.d/modules.sh;'
                'module unload python/ana;'
-               'module unload scipion/release-1.2.1-headless;'
-               'module load scipion/release-1.2.1-headless;'   
+               'module unload scipion/scipion/2.0-zo;'
+               'module load scipion/2.0-zo;'   
                'export SCIPION_NOGUI=true;'
                'export SCIPIONBOX_ISPYB_ON=True;'
                )
