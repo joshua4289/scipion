@@ -28,7 +28,7 @@
 import sys
 import os
 from time import sleep
-from pyworkflow.manager import Manager
+from pyworkflow.project.manager import Manager
 from pyworkflow.project import Project
 import pyworkflow.utils as pwutils
 
