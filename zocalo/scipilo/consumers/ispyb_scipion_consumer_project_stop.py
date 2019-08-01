@@ -21,11 +21,10 @@ class Scipion2Runner(CommonService):
     _logger_name = 'scipion.zocalo.services.runner'
 
     def initializing(self):
-        """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
+        """ some special initalizing function  """
 
-		"""
 
-        # Add a .project file in the session which is an updated list/ json of running_projects . Only 1 project will run  all the other processed projects will be killed
+        #each instance of the runner has to be initialized
         self.running_projects = list()
 
         queue_name = "scipilo.ScipionDev"
@@ -45,6 +44,9 @@ class Scipion2Runner(CommonService):
 
 
     def find_json_from_recipe(self, rw, header, message):
+
+        """ Reads the workdlow file from ispyb and launches the main function """
+
         self.log.info("Start running scipion json finder ")
 
         import subprocess
@@ -61,11 +63,11 @@ class Scipion2Runner(CommonService):
         self.log.info("Finish running scipion workflow finder ")
 
 
-        #self.find_session_id(json_path)
+
 
         project_name = self.create_project_and_process(json_path)
 
-        # check and kill any old scipion projects in the visit
+
 
 
 
@@ -105,6 +107,7 @@ class Scipion2Runner(CommonService):
 
         '''looks in processing/ for gain file in a pre-defined location should be relative to where the the other parts '''
 
+        import os
         for root, dir, files in os.walk(folder):
 
             for f in files:
@@ -119,7 +122,7 @@ class Scipion2Runner(CommonService):
 
 
 
-    def _convert_gain(self,ip_gain_file):
+    def _convert_gain(self,ip_gain_file,op_gain_file):
         """  convert a dm4 or tiff gain to mrc helper function """
 
         cmd = ('source /etc/profile.d/modules.sh;'
@@ -127,6 +130,7 @@ class Scipion2Runner(CommonService):
                'module load EM/imod;')
 
         gain_file ='Gain.mrc'
+
 
         global imod_convert_fmt
 
@@ -145,7 +149,7 @@ class Scipion2Runner(CommonService):
         p1 = Popen(convert_command, shell=True)
         out,err = p1.communicate()
         if p1.returncode == 0:
-            self.log("output of imod format conversion  %s" % out)
+
             self.log.info("%s was  properly converted " % ip_gain_file)
 
             return gain_file
@@ -155,12 +159,13 @@ class Scipion2Runner(CommonService):
 
 
 
-        def _on_message(self,project_name,visit_dir):
-            ''' On new start project message stop  previous running projects '''
+    def on_message(self,project_name,visit_dir):
+        ''' On new start project message stop  previous running projects '''
 
         self.log.info("Scipion running projects are ".format(self.running_projects))
 
         #On a new message write out the in-memory list to .projects/projects.txt
+
 
 
         projects_file = visit_dir/'.projects'/'project.txt'
@@ -174,7 +179,7 @@ class Scipion2Runner(CommonService):
 
 
 
-        #Read txt file and stop project instead of the in-memory list because method needs to be independent of the instance of the consumer
+        #Read txt file and stop project
 
         with open(str(projects_file),'r') as pf:
             live_project_list = pf.read().split()
@@ -183,36 +188,32 @@ class Scipion2Runner(CommonService):
 
 
 
-            #pop the first item and work your way down last item is latest project
-            while len(live_project_list) > 1:
-                to_stop = live_project_list.pop(0)
+        #pop the first item and work your way down last item is latest project
+        while len(live_project_list) > 1:
+            to_stop = live_project_list.pop(0)
 
-                self.log.info("%s will be stopped " % to_stop)
-                stop_project_args = ['cd', '$SCIPION_HOME;', 'scipion', '--config $SCIPION_HOME/config/scipion.conf','python', 'scripts/stop_project.py', to_stop]
-                stop_project_cmd = self._create_prefix_command(stop_project_args)
-
-
-
-                try:
-                    p1 = Popen(stop_project_cmd,shell=True)
-                    out,err = p1.communicate()
+            self.log.info("%s will be stopped " % to_stop)
+            stop_project_args = ['cd', '$SCIPION_HOME;', 'scipion', '--config $SCIPION_HOME/config/scipion.conf','python', 'scripts/stop_project.py', to_stop]
+            stop_project_cmd = self._create_prefix_command(stop_project_args)
 
 
 
-                    if p1.returncode != 0:
-                        self.log.info("%s could not be stopped " %to_stop)
-                        self.log.info("%s was returned by stop project " %out )
-                        self.log.info("%s error was returned by stop_project " %err)
-                except:
-                    pass
-
-                if len(live_project_list) == 1:
-                    self.log.info("project run is %s" %live_project_list)
+            try:
+                p1 = Popen(stop_project_cmd,shell=True)
+                out,err = p1.communicate()
 
 
 
+                if p1.returncode != 0:
+                    self.log.info("%s could not be stopped " %to_stop)
+                    self.log.info("%s was returned by stop project " %out )
+                    self.log.info("%s error was returned by stop_project " %err)
+            except error as e:
+                self.log.info("projects stopping error ")
+                self.log.info(e)
 
-
+            if len(live_project_list) == 1:
+                self.log.info("project run is %s" %live_project_list)
 
 
 
@@ -232,7 +233,6 @@ class Scipion2Runner(CommonService):
         """Prefixes command to run loading modules to setup env """
 
         cmd = ('source /etc/profile.d/modules.sh;'
-               'module unload python/ana;'
                'module unload scipion/scipion/2.0-zo;'
                'module load scipion/2.0-zo;'   
                'export SCIPION_NOGUI=true;'
@@ -246,11 +246,21 @@ class Scipion2Runner(CommonService):
        json_data = json.load(open(str(json_path)))
        return json_data
 
+
+
+
+
+
+
+    #this should be the main method
+
     def create_project_and_process(self,json_path):
 
         ''' start processing by calling various functions  '''
 
         import shutil
+        import os
+
 
         timestamp = self.create_timestamp()
 
@@ -277,40 +287,24 @@ class Scipion2Runner(CommonService):
 
         op_gain_file = Path(workspace_dir/'Gain.mrc')
 
-        ip_gain_file = self._find_gain_path(user_dir)
+        ip_gain_file = self._find_gain_path(str(user_dir))
 
-        mrc_converted_gain = self._convert_gain(ip_gain_file)
 
+        #HOTFIX: remove gain  handling logic
+
+        mrc_converted_gain = self._convert_gain(ip_gain_file,op_gain_file)
+        #
         if os.path.exists(mrc_converted_gain):
-            shutil.copy(mrc_converted_gain,op_gain_file)
-            self.log.info("Gain.mrc coppied to processed ")
-
-
-
-
-        # This is important because of ACL's on the BEAMLINE has to get correct groups
-        # instead of running with the json directly we need to modify some parms from what is posted to determine box size
-        # instead of the copy load json into memory and make modifications
-
-
-
-
-
+            shutil.copy(str(mrc_converted_gain),str(op_gain_file))
+            self.log.info("Gain.mrc copied to processed ")
 
 
         json_to_modify = self.load_json(json_path)
 
-
-
-
-
         # pathlib2 object read / modify values and write out
-        # TODO:
-        # FIXME:find a cleaner way to do this without list indices this should be a dictionary then it's independent of the type of template json
+        #TODO:
+        #FIXME:find a cleaner way to do this without list indices this should be a dictionary then it's independent of the type of template json
         #FIXME:posted json is a list if it was a dict can move away from indices
-        # NOTE : These should only be modifications pertaining to CTF fixes < 0.5 A/Px and
-        # extract box size calculations rest is handled during the writing of the initial json
-
 
 
 
@@ -327,8 +321,6 @@ class Scipion2Runner(CommonService):
              json_to_modify[2]['lowRes'] = lowRes
              json_to_modify[2]['highRes'] = highRes
         #
-
-        import shutil
 
         shutil.copy(str(json_path), str(workflow))
         self.log.info('copy of %s was completed' %(json_path))
@@ -363,8 +355,8 @@ class Scipion2Runner(CommonService):
             self.log.error("Could not create project at {}".format(workspace_dir))
             self.log.error("create project error at {}".format(out_project_cmd,err_project_cmd))
             self.log.error('main thread consumer being killed')
-
-
+            self.log.info("I have reached at the point of the lib")
+            #sys.exit(0)
 
             #TODO: kill _the consumer with an exit the controller logic will restart it
 
@@ -372,11 +364,13 @@ class Scipion2Runner(CommonService):
         else:
             #kill other processing projects in the visit
 
-            self._on_message(str(project_name), visit_dir)
 
-            #self.running_projects.append(project_name)
 
-            #self.log.info("%s project  has been added to list of runs "%project_name)
+            self.on_message(str(project_name), visit_dir)
+
+            self.running_projects.append(project_name)
+
+            self.log.info("%s project  has been added to list of runs "%project_name)
 
             schedule_project_args = ['cd', '$SCIPION_HOME;', 'scipion','--config $SCIPION_HOME/config/scipion.conf', 'python',
                                      '$SCIPION_HOME/scripts/schedule_project.py', project_name]
@@ -390,6 +384,7 @@ class Scipion2Runner(CommonService):
             #refresh_project_cmd = self._start_refresh_project(project_name)
             #Popen(refresh_project_cmd, cwd=str(workspace_dir), shell=True)
             # disabled killing because it blocked scipion thread
+
             return project_name
 
 
