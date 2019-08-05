@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function
 from workflows.services.common_service import CommonService
 import workflows.recipe
 from subprocess import PIPE, Popen
+import os
 
 try:
     from pathlib2 import Path
@@ -11,7 +12,7 @@ except:
 
 # Active MQ Scipion Consumer started as gda2
 
-class Scipion2Runner(CommonService):
+class ScipionRunner(CommonService):
     '''A zocalo service for running Scipion'''
 
     # Human readable service name
@@ -29,7 +30,7 @@ class Scipion2Runner(CommonService):
 
         queue_name = "scipilo.ScipionDev"
 
-        self.log.info("queue that is being listended to is %s" % queue_name)
+        self.log.info("queue that is being listened to is %s" % queue_name)
 
         #self._transport.subscribe(queue_name,self.find_json_from_recipe)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
@@ -115,6 +116,7 @@ class Scipion2Runner(CommonService):
                 if "gain" or "Gain" in str(f):
 
                     if f.endswith(('mrc', 'tif', 'tiff', 'dm4')):
+                        self.log.info("the gain path found was at %s" %(os.path.join(root,f)))
                         return os.path.join(root, f)
 
 
@@ -129,7 +131,7 @@ class Scipion2Runner(CommonService):
                'module unload EM/imod;'
                'module load EM/imod;')
 
-        gain_file ='Gain.mrc'
+        #gain_file = os.path.join(op_gain_file,'Gain.mrc')
 
 
         global imod_convert_fmt
@@ -137,25 +139,33 @@ class Scipion2Runner(CommonService):
 
 
         if str(ip_gain_file.endswith('.dm4')):
-            imod_convert_fmt = ['dm2mrc', ip_gain_file, gain_file]
+            imod_convert_fmt = ['dm2mrc', ip_gain_file, str(op_gain_file)]
 
         if str(ip_gain_file.endswith(('.tiff','.tif'))):
-            imod_convert_fmt = ['tif2mrc', ip_gain_file, gain_file]
+            imod_convert_fmt = ['tif2mrc', ip_gain_file, str(op_gain_file)]
 
 
         convert_command = cmd + ' '.join(imod_convert_fmt)
+        self.log.error(convert_command)
 
 
         p1 = Popen(convert_command, shell=True)
         out,err = p1.communicate()
-        if p1.returncode == 0:
+        try:
+            p1.wait(timeout=90)
+        except subprocess.SubprocessError as e:
+            self.log.error(e)
 
+        if p1.returncode == 0:
+            self.log.info("CONVERT GAIN :command run was %s " %convert_command)
             self.log.info("%s was  properly converted " % ip_gain_file)
 
-            return gain_file
+            return op_gain_file
 
         else:
-            self.log("Error in conversion %s" % err)
+            self.log.info("Error in conversion %s" % err)
+            self.log.info("error in gain conversion  exit ")
+
 
 
 
@@ -208,7 +218,7 @@ class Scipion2Runner(CommonService):
                     self.log.info("%s could not be stopped " %to_stop)
                     self.log.info("%s was returned by stop project " %out )
                     self.log.info("%s error was returned by stop_project " %err)
-            except error as e:
+            except err as e:
                 self.log.info("projects stopping error ")
                 self.log.info(e)
 
@@ -285,18 +295,19 @@ class Scipion2Runner(CommonService):
 
         #gda2 can't write in user space so write in processed
 
-        op_gain_file = Path(workspace_dir/'Gain.mrc')
+
 
         ip_gain_file = self._find_gain_path(str(user_dir))
+        op_gain_file = Path(workspace_dir / 'Gain.mrc')
 
 
-        #HOTFIX: remove gain  handling logic
+        if ip_gain_file is not None:
+            # call convert only if gain is found else continue with kick-off if no gain file it should be a Falcon session
 
-        mrc_converted_gain = self._convert_gain(ip_gain_file,op_gain_file)
-        #
-        if os.path.exists(mrc_converted_gain):
-            shutil.copy(str(mrc_converted_gain),str(op_gain_file))
-            self.log.info("Gain.mrc copied to processed ")
+            mrc_converted_gain = self._convert_gain(ip_gain_file,op_gain_file)
+            self.log.info("gain file read in from processing and writen to %s" %mrc_converted_gain)
+
+
 
 
         json_to_modify = self.load_json(json_path)
