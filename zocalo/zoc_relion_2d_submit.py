@@ -1,1 +1,1 @@
-../software/em/relion-2.1/bin/zoc_relion_refine_submit.py
+../software/em/relion-3.0/bin/zoc_relion_refine_submit.py
