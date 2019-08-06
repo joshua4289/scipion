@@ -20,12 +20,14 @@ llvmlite==0.29.0
 matplotlib==1.5.3
 more-itertools==5.0.0
 mpi4py==3.0.0
+mrcfile==1.1.2
 multiprocess==0.70.8
 mysql-connector==2.1.7
 natsort==6.0.0
 numba==0.45.0
 numpy==1.14.1
 pandas==0.24.2
+pathlib2==2.3.4
 pathos==0.2.4
 Pillow==5.4.1
 pluggy==0.7.1
@@ -41,6 +43,7 @@ pytest==3.6.4
 python-dateutil==2.8.0
 pytz==2019.1
 requests==2.18.4
+scandir==1.10.0
 scipion-em-bsoft==1.0.3
 scipion-em-cryosparc2==1.0.4b0
 scipion-em-eman2==1.0.5
@@ -57,8 +60,6 @@ scons==3.0.4
 seaborn==0.9.0
 singledispatch==3.4.0.3
 six==1.12.0
+suds==0.4
 urllib3==1.22
 
-Scipion v2.0 (2019-04-23) Diocletian
-
->>>>> python  "-m" "pip" "freeze"
