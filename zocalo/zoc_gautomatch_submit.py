@@ -1,1 +1,1 @@
-../software/em/Gautomatch_v0.53/bin/zoc_gautomatch_submit.py
+../software/em/gautomatch-0.56/bin/zoc_gautomatch_submit.py

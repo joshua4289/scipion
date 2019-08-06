@@ -1,1 +1,1 @@
-../software/em/motioncor2-1.1.0/bin/zoc_mc2_submit.py
+../software/em/motioncor2-1.2.6/bin/zoc_mc2_submit.py
