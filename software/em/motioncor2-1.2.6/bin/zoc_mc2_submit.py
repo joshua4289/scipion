@@ -29,10 +29,12 @@ if __name__ == '__main__':
 
   # this is the job of start_services
 
-  default_configuration = '/dls_sw/apps/zocalo/secrets/credentials-testing.cfg'
-  if '--live' in sys.argv:
-    self.use_live_infrastructure = True
-    default_configuration = '/dls_sw/apps/zocalo/secrets/credentials-live.cfg'
+
+  default_configuration = '/dls_sw/apps/zocalo/secrets/credentials-live.cfg'
+  #default_configuration = '/dls_sw/apps/zocalo/secrets/credentials-testing.cfg'
+  # if '--live' in sys.argv:
+  #   self.use_live_infrastructure = True
+
 
   # override default stomp host
 
