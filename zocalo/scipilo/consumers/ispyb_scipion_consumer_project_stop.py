@@ -126,7 +126,7 @@ class ScipionRunner(CommonService):
 
     def _convert_gain(self,ip_gain_file,op_gain_file):
         """  convert a dm4 or tiff gain to mrc helper function """
-
+        import subprocess
         cmd = ('source /etc/profile.d/modules.sh;'
                'module unload EM/imod;'
                'module load EM/imod;')
@@ -154,6 +154,7 @@ class ScipionRunner(CommonService):
         try:
             p1.wait(timeout=90)
         except subprocess.SubprocessError as e:
+            pass
             self.log.error(e)
 
         if p1.returncode == 0:
