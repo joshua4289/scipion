@@ -20,7 +20,7 @@ class MotionCor2Runner(CommonService):
         """Subscribe to the per_image_analysis queue. Received messages must be acknowledged.
 
 		"""
-        queue_name = "scipilo.ScipionMotionCor2dev"
+        queue_name = "scipilo.ScipionMotionCor2"
         self.log.info("queue that is being listended to is %s" % queue_name)
         workflows.recipe.wrap_subscribe(self._transport, queue_name,
                                         self.run_MotionCor2, acknowledgement=True, log_extender=self.extend_log,
@@ -56,7 +56,10 @@ class MotionCor2Runner(CommonService):
         #convoluted logic dependent on not set rather than set 
         #TODO:convert string to list and find number of GPU's use range to then set GPU'ids
 
-        arguments[gpu_index] = os.getenv('SGE_HGR_gpu', 'GPU1')[8]
+        arguments[gpu_index] = '0'
+        # will launch on 4 gpu's with the string '0 1 2 3' but does not work on all 4 for some reason segfaults
+        # proper way to get GPU from the environment
+        # os.getenv('SGE_HGR_gpu', 'GPU1')[8]
 
         self.log.info("Arguments are '%s'" % ' '.join(arguments))
 
