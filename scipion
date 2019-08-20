@@ -215,7 +215,7 @@ try:
          XMIPP_LIB,
          os.environ.get('LD_LIBRARY_PATH', '')]
     )
-    ignorePythonpath = os.environ.get('SCIPION_IGNORE_PYTHONPATH', False)
+    ignorePythonpath = os.environ.get('SCIPION_IGNORE_PYTHONPATH', True)
     PYTHONPATH_LIST = [SCIPION_HOME,
                        join(SCIPION_SOFTWARE,
                             'lib', 'python2.7', 'site-packages'),
